@@ -1,0 +1,20 @@
+spring:
+  profiles:
+    active: jdbc
+  datasource:
+    url: jdbc:h2:mem:demo;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  sql:
+    init:
+      mode: always
+  h2:
+    console:
+      enabled: true
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:gLHrOQzoOPsHp0kjwk46eYv58nNmygGckdMHR5jdJDg=}
+    issuer: ${JWT_ISSUER:demo-app}
+    expires-min: ${JWT_EXPIRES_MIN:30}

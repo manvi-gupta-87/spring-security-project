@@ -1,0 +1,45 @@
+# Maven
+target/
+.mvn/wrapper/maven-wrapper.jar
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+
+# Logs
+*.log
+
+# Local overrides/secrets
+.env
+*.env
+src/main/resources/application-local.*
+src/main/resources/application-*.local.*
+# Uncomment if application.yaml contains real secrets:
+# src/main/resources/application.yaml
+
+# Documentation
+CLAUDE.md
+HELP.md
+docs/
+
+# Claude Code settings
+.claude/
+
+# Build wrapper files (already tracked, but good practice)
+mvnw
+mvnw.cmd
+
+# Temporary/backup files
+*.swp
+*.swo
+*~
+*.bak
+*.tmp
+*.orig
+
+# Spring Boot specific
+spring-boot-devtools.properties
