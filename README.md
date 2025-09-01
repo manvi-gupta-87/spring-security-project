@@ -7,6 +7,7 @@ A Spring Boot application demonstrating secure REST API implementation with JWT-
 ## 🚀 Features
 
 - **JWT Authentication**: Stateless token-based authentication using HS256 algorithm
+- **Token Refresh**: Extend session without re-authentication via `/api/token/refresh`
 - **Role-Based Access Control**: Hierarchical roles (ADMIN > USER) with endpoint-level security
 - **Secure Password Storage**: BCrypt password encoding
 - **Environment-Based Configuration**: Secure secrets management using environment variables
@@ -99,6 +100,7 @@ The application will start on `http://localhost:8080`
 |----------|-------------|
 | `/hello`, `/health` | Public |
 | `/api/token` | Public (authentication endpoint) |
+| `/api/token/refresh` | Authenticated users (with valid token) |
 | `/api/users/me` | Authenticated users |
 | `/api/admin/**` | Admin role only |
 | `/api/manager/**` | Method-level security |
@@ -140,6 +142,7 @@ See [docs/api-testing-commands.md](docs/api-testing-commands.md) for comprehensi
 - ✅ Added spring-dotenv for automatic .env file loading
 - ✅ Created comprehensive API testing documentation
 - ✅ Set up SSH authentication for GitHub
+- ✅ Added JWT token refresh endpoint (`/api/token/refresh`)
 
 ## 🤝 Contributing
 

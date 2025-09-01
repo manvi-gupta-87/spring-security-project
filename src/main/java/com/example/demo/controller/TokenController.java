@@ -9,14 +9,13 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
-import org.springframework.security.oauth2.jwt.JwsHeader;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -26,13 +25,16 @@ public class TokenController {
     private final JwtEncoder encoder;
     private final String issuer;
     private final long ttlMinutes;
+    private final JwtDecoder decoder;
 
     public TokenController(AuthenticationManager authManager,
                            JwtEncoder encoder,
+                           JwtDecoder decoder,
                            @Value("${app.jwt.issuer}") String issuer,
                            @Value("${app.jwt.expires-min}") long ttlMinutes) {
         this.authenticationManager = authManager;
         this.encoder = encoder;
+        this.decoder = decoder;
         this.issuer = issuer;
         this.ttlMinutes = ttlMinutes;
     }
@@ -86,5 +88,43 @@ public class TokenController {
                     "details", e.getClass().getSimpleName()
             ));
         }
+    }
+
+    /** Endpoint that takes current valid token and generates a new token with extended validity
+     * @AuthenticationPrincipal annotation indicates Spring to provide the current user's token
+     * **/
+    @PostMapping("/token/refresh")
+    public ResponseEntity<?>  refreshToken(@AuthenticationPrincipal  Jwt jwt) {
+        if (jwt == null) {
+            return ResponseEntity.status(401).body(Map.of(
+                    "status" ,401,
+                    "error","Unauthorized",
+                    "message", "Valid Token Required"
+            ));
+        }
+
+        String subject = jwt.getSubject(); // get the user name from old token
+        List<String> roles = jwt.getClaimAsStringList("roles"); // get the user permission from old token
+
+        var now = Instant.now();
+        var claims = JwtClaimsSet.builder()
+                .issuer(issuer)
+                .issuedAt(now)
+                .expiresAt(now.plusSeconds(ttlMinutes* 60))
+                .claim("roles", roles)
+                .subject(subject)
+                .build();
+
+        // Creates actual New token using algorithm HS256
+        var jwsheader = JwsHeader.with(MacAlgorithm.HS256).build();
+        var token = encoder.encode(JwtEncoderParameters.from(jwsheader, claims)).getTokenValue();
+
+        return ResponseEntity.status(200).body(Map.of(
+                "access_token", token,
+                "token_type", "Bearer",
+                "expires_in", ttlMinutes * 60,
+                "roles", roles,
+                "refreshed_at", now.toString()
+        ));
     }
 }
