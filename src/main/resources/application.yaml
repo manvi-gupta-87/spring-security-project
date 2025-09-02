@@ -15,6 +15,9 @@ spring:
 
 app:
   jwt:
-    secret: ${JWT_SECRET:gLHrOQzoOPsHp0kjwk46eYv58nNmygGckdMHR5jdJDg=}
+#    secret: ${JWT_SECRET:gLHrOQzoOPsHp0kjwk46eYv58nNmygGckdMHR5jdJDg=}
+    # Add new RSA configuration
+    private-key-path: classpath:jwt-private.pem
+    public-key-path: classpath:jwt-public.pem
     issuer: ${JWT_ISSUER:demo-app}
     expires-min: ${JWT_EXPIRES_MIN:30}

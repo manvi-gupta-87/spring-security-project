@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,7 +72,8 @@ public class TokenController {
                     .claim("roles", roles)
                     .build();
 
-            var jwsHeader = JwsHeader.with(MacAlgorithm.HS256).build();
+//            var jwsHeader = JwsHeader.with(MacAlgorithm.HS256).build();
+            var jwsHeader = JwsHeader.with(SignatureAlgorithm.RS256).build();
             var token = encoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
 
             return ResponseEntity.ok(Map.of(
@@ -116,7 +118,8 @@ public class TokenController {
                 .build();
 
         // Creates actual New token using algorithm HS256
-        var jwsheader = JwsHeader.with(MacAlgorithm.HS256).build();
+//        var jwsheader = JwsHeader.with(MacAlgorithm.HS256).build();
+        var jwsheader = JwsHeader.with(SignatureAlgorithm.RS256).build();
         var token = encoder.encode(JwtEncoderParameters.from(jwsheader, claims)).getTokenValue();
 
         return ResponseEntity.status(200).body(Map.of(
