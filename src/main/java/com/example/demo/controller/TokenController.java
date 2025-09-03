@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
@@ -70,6 +71,8 @@ public class TokenController {
                     .expiresAt(now.plusSeconds(ttlMinutes * 60))
                     .subject(auth.getName())
                     .claim("roles", roles)
+                    .claim("aud", List.of("demo-api"))
+                    .claim("jti", UUID.randomUUID().toString())
                     .build();
 
 //            var jwsHeader = JwsHeader.with(MacAlgorithm.HS256).build();
@@ -114,6 +117,8 @@ public class TokenController {
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(ttlMinutes* 60))
                 .claim("roles", roles)
+                .claim("aud", List.of("demo-api"))
+                .claim("jti", UUID.randomUUID().toString())
                 .subject(subject)
                 .build();
 

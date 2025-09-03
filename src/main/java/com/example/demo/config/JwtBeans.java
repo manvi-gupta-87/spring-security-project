@@ -46,7 +46,13 @@ public class JwtBeans {
         return new NimbusJwtEncoder(jwkSource);
     }
 
+    //Visual Flow Diagram
+    //
+    //  PEM File → Read as String → Remove Headers → Base64 Decode → Binary Data → Java RSA Key Object
+    // PKCS8 is standard format for private keys while X509 is standard format for public keys
+
     private RSAPrivateKey loadPrivateKey() throws Exception {
+        // Step 1: Read the key file and convert into to text string
         String key = new String(privateKeyResource.getInputStream().readAllBytes());
 
         // Remove PEM headers and whitespace
@@ -56,9 +62,13 @@ public class JwtBeans {
                 .replace("-----END PRIVATE KEY-----", "")
                 .replaceAll("\\s", "");
 
+        // Step 3: Decode from Base64
         byte[] keyBytes = Base64.getDecoder().decode(key);
+
+        // Step 4: Create RSA private key object
+        // keyFactory is the javatool for creating key objects
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
+        PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes); // tells java that these bytes are in PKCS8 format
         return (RSAPrivateKey) keyFactory.generatePrivate(spec);
     }
 
