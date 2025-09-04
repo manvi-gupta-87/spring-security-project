@@ -1,5 +1,8 @@
 package com.example.demo.controller;
 
+import com.example.demo.dtos.RefreshTokenRequest;
+import com.example.demo.model.RefreshToken;
+import com.example.demo.service.RefreshTokenService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,10 +31,12 @@ public class TokenController {
     private final String issuer;
     private final long ttlMinutes;
     private final JwtDecoder decoder;
+    private final RefreshTokenService refreshTokenService;
 
     public TokenController(AuthenticationManager authManager,
                            JwtEncoder encoder,
                            JwtDecoder decoder,
+                           RefreshTokenService refreshTokenService,
                            @Value("${app.jwt.issuer}") String issuer,
                            @Value("${app.jwt.expires-min}") long ttlMinutes) {
         this.authenticationManager = authManager;
@@ -39,6 +44,7 @@ public class TokenController {
         this.decoder = decoder;
         this.issuer = issuer;
         this.ttlMinutes = ttlMinutes;
+        this.refreshTokenService = refreshTokenService;
     }
 
     public static class TokenRequest {
@@ -79,8 +85,12 @@ public class TokenController {
             var jwsHeader = JwsHeader.with(SignatureAlgorithm.RS256).build();
             var token = encoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
 
+            //Create refresh token
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(auth.getName());
+
             return ResponseEntity.ok(Map.of(
                     "access_token", token,
+                    "refresh_token", refreshToken.getToken(),
                     "token_type", "Bearer",
                     "expires_in", ttlMinutes * 60,
                     "roles", roles
@@ -99,8 +109,8 @@ public class TokenController {
      * @AuthenticationPrincipal annotation indicates Spring to provide the current user's token
      * **/
     @PostMapping("/token/refresh")
-    public ResponseEntity<?>  refreshToken(@AuthenticationPrincipal  Jwt jwt) {
-        if (jwt == null) {
+    public ResponseEntity<?>  refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
+        if (request == null) {
             return ResponseEntity.status(401).body(Map.of(
                     "status" ,401,
                     "error","Unauthorized",
@@ -108,8 +118,13 @@ public class TokenController {
             ));
         }
 
-        String subject = jwt.getSubject(); // get the user name from old token
-        List<String> roles = jwt.getClaimAsStringList("roles"); // get the user permission from old token
+        // Verify and rotate the refresh token
+        RefreshToken newRefreshToken = refreshTokenService.verifyAndRotateToken(request.refresh_token);
+
+        String userName = newRefreshToken.getUsername();
+        // You'll need to load user roles - either from DB or store in refresh token
+        // For now, using a simple approach (you should load from UserDetailsService)
+        List<String> roles = List.of("ROLE_USER"); // Load actual roles
 
         var now = Instant.now();
         var claims = JwtClaimsSet.builder()
@@ -119,7 +134,6 @@ public class TokenController {
                 .claim("roles", roles)
                 .claim("aud", List.of("demo-api"))
                 .claim("jti", UUID.randomUUID().toString())
-                .subject(subject)
                 .build();
 
         // Creates actual New token using algorithm HS256
@@ -129,6 +143,7 @@ public class TokenController {
 
         return ResponseEntity.status(200).body(Map.of(
                 "access_token", token,
+                "refresh_token",newRefreshToken.getToken(),
                 "token_type", "Bearer",
                 "expires_in", ttlMinutes * 60,
                 "roles", roles,

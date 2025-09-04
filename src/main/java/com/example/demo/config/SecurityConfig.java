@@ -51,7 +51,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/manager", "/api/manager/").permitAll()
                         .requestMatchers("/api/users/me").authenticated()
-                        .requestMatchers("/api/token/refresh").authenticated()
+                        .requestMatchers("/api/token/refresh").permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())
