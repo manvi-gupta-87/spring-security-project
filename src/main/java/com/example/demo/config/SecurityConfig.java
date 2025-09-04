@@ -52,6 +52,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/manager", "/api/manager/").permitAll()
                         .requestMatchers("/api/users/me").authenticated()
                         .requestMatchers("/api/token/refresh").permitAll()
+                        .requestMatchers("/api/logout").authenticated()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())

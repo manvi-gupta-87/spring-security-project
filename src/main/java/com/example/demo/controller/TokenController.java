@@ -3,8 +3,10 @@ package com.example.demo.controller;
 import com.example.demo.dtos.RefreshTokenRequest;
 import com.example.demo.model.RefreshToken;
 import com.example.demo.service.RefreshTokenService;
+import com.example.demo.service.TokenBlacklistService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import org.apache.el.parser.Token;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,9 +21,7 @@ import org.springframework.security.oauth2.jwt.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api")
@@ -32,17 +32,20 @@ public class TokenController {
     private final long ttlMinutes;
     private final JwtDecoder decoder;
     private final RefreshTokenService refreshTokenService;
+    private final TokenBlacklistService blacklistService;
 
     public TokenController(AuthenticationManager authManager,
                            JwtEncoder encoder,
                            JwtDecoder decoder,
                            RefreshTokenService refreshTokenService,
+                           TokenBlacklistService blacklistService,
                            @Value("${app.jwt.issuer}") String issuer,
                            @Value("${app.jwt.expires-min}") long ttlMinutes) {
         this.authenticationManager = authManager;
         this.encoder = encoder;
         this.decoder = decoder;
         this.issuer = issuer;
+        this.blacklistService = blacklistService;
         this.ttlMinutes = ttlMinutes;
         this.refreshTokenService = refreshTokenService;
     }
@@ -149,5 +152,45 @@ public class TokenController {
                 "roles", roles,
                 "refreshed_at", now.toString()
         ));
+    }
+
+    @PostMapping("/logout")
+    ResponseEntity<?>logout(@AuthenticationPrincipal Jwt jwt,
+                            @RequestHeader(value = "X-Refresh-Token", required = false) String
+                                    refreshToken) {
+
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Blacklist the access token JTI
+            if (jwt != null) {
+                String jti = jwt.getClaimAsString("jti");
+                Instant expiresAt = jwt.getExpiresAt();
+                if (jti != null && expiresAt != null) {
+                    blacklistService.blackListToken(jti, expiresAt);
+                    response.put("access_token_revoked", true);
+                }
+            }
+
+            //Invalidate refresh token
+            if (refreshToken != null) {
+                try {
+                    Optional<RefreshToken> refreshToken1 = refreshTokenService.findByToken(refreshToken);
+                    if (refreshToken1.isPresent()) {
+                        refreshTokenService.invalidateTokenFamily(refreshToken1.get().getTokenFamily());
+                        response.put("refresh_token_revoked", true);
+                    }
+                } catch (Exception e) {
+                    response.put("refresh_token_error", e.getMessage());
+                }
+            }
+            response.put("message", "Successfully logged out");
+            response.put("timestamp", Instant.now().toString());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                    "error", "Logout failed",
+                    "message", e.getMessage()
+            ));
+        }
     }
 }

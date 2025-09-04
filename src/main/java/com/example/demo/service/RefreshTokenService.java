@@ -93,7 +93,7 @@ public class RefreshTokenService {
      System: "Kill ALL tokens in family ABC123!"
      Result: Token3 also dies, hacker locked out
      */
-    private void invalidateTokenFamily(String tokenFamily) {
+    public void invalidateTokenFamily(String tokenFamily) {
         refreshTokens.values().stream().filter(token -> token.getTokenFamily().equals(tokenFamily))
                 .forEach(t -> t.setUsed(true));
     }
