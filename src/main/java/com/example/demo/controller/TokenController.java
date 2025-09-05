@@ -30,9 +30,11 @@ public class TokenController {
     private final JwtEncoder encoder;
     private final String issuer;
     private final long ttlMinutes;
+    private final String audience;
     private final JwtDecoder decoder;
     private final RefreshTokenService refreshTokenService;
     private final TokenBlacklistService blacklistService;
+
 
     public TokenController(AuthenticationManager authManager,
                            JwtEncoder encoder,
@@ -40,13 +42,15 @@ public class TokenController {
                            RefreshTokenService refreshTokenService,
                            TokenBlacklistService blacklistService,
                            @Value("${app.jwt.issuer}") String issuer,
-                           @Value("${app.jwt.expires-min}") long ttlMinutes) {
+                           @Value("${app.jwt.expires-min}") long ttlMinutes,
+                           @Value("${app.jwt.audience}") String audience) {
         this.authenticationManager = authManager;
         this.encoder = encoder;
         this.decoder = decoder;
         this.issuer = issuer;
         this.blacklistService = blacklistService;
         this.ttlMinutes = ttlMinutes;
+        this.audience = audience;
         this.refreshTokenService = refreshTokenService;
     }
 
@@ -80,7 +84,7 @@ public class TokenController {
                     .expiresAt(now.plusSeconds(ttlMinutes * 60))
                     .subject(auth.getName())
                     .claim("roles", roles)
-                    .claim("aud", List.of("demo-api"))
+                    .claim("aud", List.of(audience))
                     .claim("jti", UUID.randomUUID().toString())
                     .build();
 
@@ -135,7 +139,7 @@ public class TokenController {
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(ttlMinutes* 60))
                 .claim("roles", roles)
-                .claim("aud", List.of("demo-api"))
+                .claim("aud", List.of(audience))
                 .claim("jti", UUID.randomUUID().toString())
                 .build();
 

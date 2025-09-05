@@ -19,3 +19,4 @@ app:
     public-key-path: classpath:jwt-public.pem
     issuer: demo-app
     expires-min: 30
+    audience: demo-api

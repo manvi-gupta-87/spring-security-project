@@ -21,3 +21,4 @@ app:
     public-key-path: classpath:jwt-public.pem
     issuer: ${JWT_ISSUER:demo-app}
     expires-min: ${JWT_EXPIRES_MIN:30}
+    audience: ${JWT_AUDIENCE:demo-api}

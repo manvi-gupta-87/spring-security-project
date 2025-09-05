@@ -87,7 +87,7 @@ public class JwtBeans {
     }
 
     @Bean
-    JwtDecoder jwtDecoder(CustomJwtValidator customValidator) throws Exception {
+    JwtDecoder jwtDecoder(CustomJwtValidator customValidator, AudienceValidator audienceValidator) throws Exception {
         RSAPublicKey publicKey = loadPublicKey();
 
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withPublicKey(publicKey)
@@ -98,7 +98,8 @@ public class JwtBeans {
         OAuth2TokenValidator<Jwt> defaultValidators = JwtValidators.createDefault();
         OAuth2TokenValidator<Jwt> combinedValidator = new DelegatingOAuth2TokenValidator<>(
                 defaultValidators,
-                customValidator
+                customValidator,
+                audienceValidator
         );
 
         decoder.setJwtValidator(combinedValidator);
