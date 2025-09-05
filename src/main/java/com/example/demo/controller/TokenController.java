@@ -89,7 +89,8 @@ public class TokenController {
                     .build();
 
 //            var jwsHeader = JwsHeader.with(MacAlgorithm.HS256).build();
-            var jwsHeader = JwsHeader.with(SignatureAlgorithm.RS256).build();
+            var jwsHeader = JwsHeader.with(SignatureAlgorithm.RS256)
+                    .keyId("demo-key-2025").build();
             var token = encoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
 
             //Create refresh token
@@ -145,7 +146,8 @@ public class TokenController {
 
         // Creates actual New token using algorithm HS256
 //        var jwsheader = JwsHeader.with(MacAlgorithm.HS256).build();
-        var jwsheader = JwsHeader.with(SignatureAlgorithm.RS256).build();
+        var jwsheader = JwsHeader.with(SignatureAlgorithm.RS256)
+                .keyId("demo-key-2025").build();
         var token = encoder.encode(JwtEncoderParameters.from(jwsheader, claims)).getTokenValue();
 
         return ResponseEntity.status(200).body(Map.of(

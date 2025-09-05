@@ -40,6 +40,7 @@ public class JwtBeans {
         var jwk = new RSAKey.Builder(publicKey)
                 .privateKey(privateKey)
                 .algorithm(JWSAlgorithm.RS256)
+                .keyID("demo-key-2025")
                 .build();
 
         JWKSource<SecurityContext> jwkSource = (jwkSelector, context) -> List.of(jwk);

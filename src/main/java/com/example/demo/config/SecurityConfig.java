@@ -46,7 +46,7 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/hello", "/health", "/api/token").permitAll()
+                        .requestMatchers("/hello", "/health", "/api/token", "/.well-known/jwks.json").permitAll()
                         .requestMatchers("/api/users/register").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/manager", "/api/manager/").permitAll()
