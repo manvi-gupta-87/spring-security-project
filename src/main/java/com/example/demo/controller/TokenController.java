@@ -86,6 +86,7 @@ public class TokenController {
                     .claim("roles", roles)
                     .claim("aud", List.of(audience))
                     .claim("jti", UUID.randomUUID().toString())
+                    .claim("token_type", "access")
                     .build();
 
 //            var jwsHeader = JwsHeader.with(MacAlgorithm.HS256).build();
@@ -142,6 +143,7 @@ public class TokenController {
                 .claim("roles", roles)
                 .claim("aud", List.of(audience))
                 .claim("jti", UUID.randomUUID().toString())
+                .claim("token_type", "access")
                 .build();
 
         // Creates actual New token using algorithm HS256

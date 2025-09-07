@@ -5,12 +5,15 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -50,10 +53,16 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public Map<String, Object> getCurrentUser(Authentication auth) {
+    public Map<String, Object> getCurrentUser(@AuthenticationPrincipal Jwt jwt) {
+
+
         return Map.of(
-                "name", auth.getName(),
-                "authorities", auth.getAuthorities().toString()
+                "sub", jwt.getSubject(),
+                "roles", jwt.getClaimAsStringList("roles"),
+                "aud", jwt.getAudience(),
+                "token_type", jwt.getClaimAsString("token_type"),
+                "iss", jwt.getClaimAsString("iss"),
+                "jti", jwt.getId()
         );
     }
 }
