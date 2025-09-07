@@ -16,6 +16,33 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * Spring Security Configuration
+ * 
+ * Filter Chain Architecture (in order of execution):
+ * 1. SecurityContextPersistenceFilter - Establishes SecurityContext from session (disabled in stateless)
+ * 2. HeaderWriterFilter - Adds security headers to response
+ * 3. CorsFilter - Handles CORS preflight and headers
+ * 4. CsrfFilter - CSRF protection (disabled for REST APIs)
+ * 5. LogoutFilter - Processes logout requests
+ * 6. OAuth2AuthorizationRequestRedirectFilter - OAuth2 login flow
+ * 7. UsernamePasswordAuthenticationFilter - Form login processing
+ * 8. DefaultLoginPageGeneratingFilter - Generates default login page
+ * 9. BasicAuthenticationFilter - HTTP Basic authentication
+ * 10. BearerTokenAuthenticationFilter - JWT token processing (OAuth2 Resource Server)
+ * 11. RequestCacheAwareFilter - Saves/restores requests
+ * 12. SecurityContextHolderAwareRequestFilter - Servlet API integration
+ * 13. AnonymousAuthenticationFilter - Creates anonymous authentication
+ * 14. SessionManagementFilter - Session fixation protection
+ * 15. ExceptionTranslationFilter - Catches security exceptions, triggers authentication
+ * 16. FilterSecurityInterceptor - Final authorization decisions
+ * 
+ * In this configuration:
+ * - Stateless session (no session creation)
+ * - JWT Bearer token authentication via OAuth2 Resource Server
+ * - Custom JSON error responses for 401/403
+ * - Role hierarchy: ADMIN > USER
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -51,6 +78,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/manager", "/api/manager/").permitAll()
                         .requestMatchers("/api/users/me").authenticated()
+                        .requestMatchers("/api/security-context").authenticated()
+                        .requestMatchers("/api/basic-auth-demo").authenticated()
                         .requestMatchers("/api/token/refresh").permitAll()
                         .requestMatchers("/api/logout").authenticated()
                         .anyRequest().authenticated()

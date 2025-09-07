@@ -22,3 +22,17 @@ app:
     issuer: ${JWT_ISSUER:demo-app}
     expires-min: ${JWT_EXPIRES_MIN:30}
     audience: ${JWT_AUDIENCE:demo-api}
+
+# Logging configuration for understanding Spring Security
+logging:
+  level:
+    # Enable debug logging for Spring Security to see filter chain
+    org.springframework.security: DEBUG
+    # Enable trace for even more detailed security information (optional)
+    # org.springframework.security: TRACE
+    # Show authentication and authorization decisions
+    org.springframework.security.web.FilterChainProxy: DEBUG
+    # Show JWT validation details
+    org.springframework.security.oauth2: DEBUG
+    # Application logging
+    com.example.demo: INFO
