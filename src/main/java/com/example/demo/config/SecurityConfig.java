@@ -15,6 +15,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 /**
  * Spring Security Configuration
@@ -68,10 +70,27 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http,
                                            JsonAuthEntryPoint entryPoint,
-                                           JsonAccessDeniedHandler deniedHandler) throws Exception {
+                                           JsonAccessDeniedHandler deniedHandler,
+                                           CorsConfigurationSource corsConfigurationSource) throws Exception {
         http
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
+                //  - nosniff: Stops browser from guessing file types
+                //  - DENY: Prevents your site being embedded in iframes
+                //  - XSS protection: Enables browser's built-in XSS filter
+                //  - HSTS: Forces HTTPS for 1 year (only works on HTTPS sites)
+                //  - CSP: Only allows resources from your own domain
+                .headers(headers-> headers
+                        .contentTypeOptions(Customizer.withDefaults()) // X-Content-Type-Options: nosniff
+                        .frameOptions(frame -> frame.deny()) // // X-Frame-Options: DENY
+                        .xssProtection(xss -> xss.headerValue(XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK))  // X-XSS-Protection: 1; mode=block))
+                        .httpStrictTransportSecurity(hsts -> hsts
+                                .includeSubDomains(true)
+                                .maxAgeInSeconds(31536000))  // HSTS: max-age=31536000; includeSubDomains
+                        .contentSecurityPolicy(csp -> csp
+                                .policyDirectives("default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'"))  // Basic CSP
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/hello", "/health", "/api/token", "/.well-known/jwks.json").permitAll()
                         .requestMatchers("/api/users/register").permitAll()
