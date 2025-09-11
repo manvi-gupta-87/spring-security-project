@@ -100,6 +100,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/security-context").authenticated()
                         .requestMatchers("/api/basic-auth-demo").authenticated()
                         .requestMatchers("/api/token/refresh").permitAll()
+                        .requestMatchers("/api/v1/**", "/api/v2/**", "/api/versions").permitAll()
                         .requestMatchers("/api/logout").authenticated()
                         .anyRequest().authenticated()
                 )

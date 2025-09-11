@@ -51,7 +51,7 @@ spring-security-project/
 │   ├── schema.sql                    # Database schema
 │   └── data.sql                       # Initial data
 ├── .env.example                       # Environment variables template
-└── pom.xml                           # Maven dependencies
+└──                            # Maven dependencies
 ```
 
 ## 🔧 Setup & Installation
