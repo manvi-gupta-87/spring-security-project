@@ -31,7 +31,7 @@ export class Login {
     const {username, password} = this.form.value;
 
     this.auth.login(username, password).subscribe({
-      next: () => this.router.navigate(['/']),
+      next: () => this.router.navigate(['/home']),
       error: (error) => {
         this.errorMessage = error.error.message
         this.isLoading = false;

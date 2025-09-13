@@ -1,0 +1,37 @@
+<div class="home-container">
+    <nav class="navbar">
+      <div class="nav-brand">Spring Security Demo</div>
+      <button class="logout-btn" (click)="logout()" [disabled]="isLoading">
+        {{ isLoading ? 'Logging out...' : 'Logout' }}
+      </button>
+    </nav>
+
+    <div class="content">
+      <div class="welcome-card">
+        <h1>Welcome to the Application!</h1>
+        <p class="welcome-message">You have successfully logged in.</p>
+
+        <div class="info-section">
+          <h2>Your Authentication Status</h2>
+          <div class="status-badge success">✓ Authenticated</div>
+
+          <div class="features">
+            <h3>Available Features:</h3>
+            <ul>
+              <li>JWT-based authentication</li>
+              <li>Secure API access</li>
+              <li>Role-based authorization</li>
+              <li>Token auto-refresh</li>
+              <li>Secure logout with token blacklisting</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="action-btn" (click)="logout()">
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>

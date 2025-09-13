@@ -1,0 +1,143 @@
+.home-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  .navbar {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .nav-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #667eea;
+  }
+
+  .logout-btn {
+    padding: 0.5rem 1.5rem;
+    background: #e53e3e;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .logout-btn:hover:not(:disabled) {
+    background: #c53030;
+  }
+
+  .logout-btn:disabled {
+    background: #cbd5e0;
+    cursor: not-allowed;
+  }
+
+  .content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 70px);
+    padding: 2rem;
+  }
+
+  .welcome-card {
+    background: white;
+    padding: 3rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    max-width: 600px;
+    width: 100%;
+  }
+
+  h1 {
+    color: #2d3748;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .welcome-message {
+    color: #718096;
+    text-align: center;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
+
+  .info-section {
+    background: #f7fafc;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 2rem 0;
+  }
+
+  h2 {
+    color: #4a5568;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .status-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
+
+  .status-badge.success {
+    background: #c6f6d5;
+    color: #22543d;
+  }
+
+  .features {
+    margin-top: 1.5rem;
+  }
+
+  h3 {
+    color: #4a5568;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  li {
+    padding: 0.5rem 0;
+    color: #718096;
+    position: relative;
+    padding-left: 1.5rem;
+  }
+
+  li:before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: #667eea;
+  }
+
+  .actions {
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .action-btn {
+    padding: 0.75rem 2rem;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .action-btn:hover {
+    background: #5a67d8;
+  }
