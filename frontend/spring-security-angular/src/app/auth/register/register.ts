@@ -51,8 +51,14 @@ export class Register {
             }, 2000);
         },
         error: (error) => {
-          this.errorMessage = error.error?.message || 'Registration failed';
-            this.isLoading = false;
+          if (error.status === 409) {
+            this.errorMessage = 'Username already exists. Please choose a different username.';
+          } else if (error.status === 400) {
+            this.errorMessage = error.error?.message || 'Invalid input. Please check your data.';
+          } else {
+            this.errorMessage = error.error || 'Registration failed. Please try again.';
+          }
+          this.isLoading = false;
         }
       })
     }

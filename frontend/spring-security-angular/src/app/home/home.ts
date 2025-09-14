@@ -17,12 +17,10 @@ export class Home implements OnInit{
 
   ngOnInit(): void {
     
-    // Check if user is logged in
-      if (!this.auth.isLoggedIn()) {
-        this.router.navigate(['/login']);
-      }
-
-      // if logged in, show user details
+    // Guard ensures user is logged in before reaching here                                                  │ │
+    // No need to check authentication anymore  
+    
+    // if logged in, show user details
       this.userName = 'User';
 
   }
