@@ -40,6 +40,13 @@ export class Auth {
     );
   }
 
+  register(username: string, password: string) {
+    return this.http.post(`${this.apiUrl}/users/register`, 
+      { userName: username, password },
+      { responseType: 'text' }
+    );
+  }
+
   getToken() {
     return this.tokenSubject.asObservable();
   }
