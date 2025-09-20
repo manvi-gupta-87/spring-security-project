@@ -18,7 +18,6 @@ public class HelloController {
         return "Hello User - Welcome to our application!";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/health")
     public String health() {
         return "Application is running!";
