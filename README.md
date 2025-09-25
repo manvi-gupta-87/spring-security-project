@@ -112,8 +112,41 @@ spring-security-project/
 - Node.js 18+
 - Maven 3.6+
 - Angular CLI 18
+- Docker & Docker Compose (for containerized deployment)
 
-### Backend Setup
+### Option 1: Run with Docker (Recommended)
+
+1. Build and start all services:
+```bash
+# Build images (use --no-cache for clean build)
+docker-compose build
+
+# Start services in background
+docker-compose up -d
+```
+
+2. Access the application:
+- Frontend: `http://localhost:4200`
+- Backend API: `http://localhost:8081`
+
+3. View logs:
+```bash
+# All services
+docker-compose logs -f
+
+# Specific service
+docker-compose logs -f backend
+docker-compose logs -f frontend
+```
+
+4. Stop services:
+```bash
+docker-compose down
+```
+
+### Option 2: Run Locally
+
+#### Backend Setup
 
 1. Navigate to backend directory:
 ```bash
@@ -128,7 +161,7 @@ mvn spring-boot:run
 
 The backend will start on `http://localhost:8080`
 
-### Frontend Setup
+#### Frontend Setup
 
 1. Navigate to frontend directory:
 ```bash
@@ -146,6 +179,34 @@ ng serve
 ```
 
 The frontend will start on `http://localhost:4200`
+
+### Docker Commands Reference
+
+```bash
+# Build images
+docker-compose build
+
+# Start services
+docker-compose up -d
+
+# Stop services
+docker-compose down
+
+# View logs
+docker-compose logs -f
+
+# Restart services
+docker-compose restart
+
+# Check service status
+docker-compose ps
+
+# Remove everything (containers, networks, volumes)
+docker-compose down -v
+
+# Rebuild and restart
+docker-compose down && docker-compose build --no-cache && docker-compose up -d
+```
 
 ## 🔑 Default Users
 
